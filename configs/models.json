@@ -1,0 +1,27 @@
+{
+  "smolvlm2_500m": {
+    "model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+    "adapter_type": "chat",
+    "trust_remote_code": false,
+    "role": "smallest edge-oriented baseline"
+  },
+  "smolvlm2_2p2b": {
+    "model_id": "HuggingFaceTB/SmolVLM2-2.2B-Instruct",
+    "adapter_type": "chat",
+    "trust_remote_code": false,
+    "role": "primary compact VLM"
+  },
+  "phi35_vision": {
+    "model_id": "microsoft/Phi-3.5-vision-instruct",
+    "revision": "12b77fb40b63a2c73c68243d3f767aab688a1b2a",
+    "adapter_type": "phi35",
+    "trust_remote_code": true,
+    "role": "compact Microsoft baseline"
+  },
+  "llava15_7b": {
+    "model_id": "llava-hf/llava-1.5-7b-hf",
+    "adapter_type": "chat",
+    "trust_remote_code": false,
+    "role": "larger historical VLM baseline"
+  }
+}

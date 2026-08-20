@@ -1,0 +1,11 @@
+# Official Phi-3.5-Vision reference stack, isolated from the main VLM runtime.
+# Source: https://huggingface.co/microsoft/Phi-3.5-vision-instruct
+torch==2.3.0
+torchvision==0.18.0
+transformers==4.43.0
+accelerate==0.30.0
+numpy==1.24.4
+Pillow==10.3.0
+Requests==2.31.0
+psutil>=5.9,<8
+sentencepiece>=0.2,<0.3

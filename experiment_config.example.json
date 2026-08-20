@@ -1,0 +1,20 @@
+{
+  "project_root": ".",
+  "output_root": "./outputs/wacv",
+  "seed": 2026,
+  "tile_size": 1024,
+  "overlap": 0.25,
+  "min_visible_fraction": 0.5,
+  "datasets": {
+    "magnolia": {
+      "images": "/path/to/magnolia/images",
+      "labels": "/path/to/magnolia/labels",
+      "version": "relabeled_review"
+    },
+    "azalea": {
+      "images": "/path/to/azalea/images",
+      "labels": "/path/to/azalea/labels",
+      "version": "relabeled_review"
+    }
+  }
+}

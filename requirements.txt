@@ -1,0 +1,15 @@
+Pillow>=10.0
+matplotlib>=3.8
+numpy>=1.26
+scipy>=1.13
+scikit-learn>=1.5
+psutil>=5.9
+torch>=2.3
+torchvision>=0.18
+transformers>=4.52,<5
+accelerate>=0.33
+sentencepiece>=0.2
+num2words>=0.5.14
+datasets>=2.20
+peft>=0.12
+ultralytics>=8.3

@@ -1,0 +1,25 @@
+.DS_Store
+._*
+__pycache__/
+*.py[cod]
+.venv/
+.env/
+.envs/
+experiment_config.json
+outputs/
+*.pt
+*.pth
+*.safetensors
+*.bin
+wandb/
+
+# Manuscripts and local exports are intentionally excluded.
+paper/
+papers/
+paper_wacv_*/
+*.doc
+*.docx
+*.tex
+*.bib
+*.pdf
+*.zip
