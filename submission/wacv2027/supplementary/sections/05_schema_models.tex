@@ -1,0 +1,50 @@
+\section{Prompt, Schema, and Model Interface}
+\label{sec:schema}
+
+\paragraph{Frozen tile prompt.}
+The following instruction is supplied with each selected RGB tile:
+\begin{quote}\small
+Inspect this UAV RGB nursery tile. Return one JSON object using exactly the
+nine fields in \cref{tab:schema}. Use only the listed categories and a
+confidence in $[0,1]$. Describe visible evidence only; use unknown and request
+human review when evidence is insufficient.
+\end{quote}
+The inference manifest contains image paths, prompts, split, and anonymous
+provenance identifiers.  Ground-truth labels reside in a separate file and are
+joined only during evaluation.
+
+\paragraph{Schema validation.}
+The parser extracts the first JSON object, checks all required keys, enforces
+categorical vocabularies, and validates numeric confidence.  Malformed output
+is retained as a failure; it is never silently repaired into a valid record.
+The nine-field schema is summarized in Table~\ref{tab:schema}.
+
+\begin{table}[t]
+\centering
+\caption{Structured output schema.}
+\label{tab:schema}
+\small
+\begin{tabularx}{\columnwidth}{lY}
+\toprule
+Field & Valid values or interpretation \\
+\midrule
+crop type & azalea, magnolia, unknown \\
+presence & yes, no \\
+count bin & 0; 1--5; 6--15; 16--30; $>$30 \\
+density & empty, sparse, moderate, dense \\
+coverage & none, low, medium, high \\
+visual evidence & concise visible-evidence text \\
+priority & low, medium, high \\
+confidence & scalar in $[0,1]$ \\
+human review & yes, no \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Model families.}
+Four public VLM configurations are registered: SmolVLM2-500M and
+SmolVLM2-2.2B~\cite{huggingface2025smolvlm2}, Phi-3.5-Vision
+\cite{microsoft2024phi35vision}, and LLaVA-1.5-7B~\cite{liu2024llava15}.
+The registry freezes the corresponding Hugging Face model-card IDs and the
+Phi revision hash.  Zero-shot and adapted models are reported separately; a
+compatibility smoke test is not an evaluation result.

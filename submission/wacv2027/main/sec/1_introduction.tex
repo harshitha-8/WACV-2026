@@ -1,0 +1,23 @@
+\section{Introduction}
+Nursery scouting from unmanned aerial vehicles (UAVs) is a high-resolution, small-object problem. A single RGB frame may contain many repeated plants, uneven spacing, partial crowns, shadows, ground fabric, and row-edge truncation. Conventional detectors can localize and count annotated instances, but their output does not directly express scouting state, confidence, or the need for human review. General-purpose VLMs provide a richer interface, yet whole-image inference is poorly matched to 5K aerial imagery: downsampling erases small instances, exhaustive tiling is expensive, and free-form responses can remain syntactically valid while being visually unsupported. Prior edge-deployed UAV systems further motivate bounded inference when sensing and control must operate under finite onboard resources~\cite{kode2026drone}.
+
+This work studies a narrower and falsifiable problem. Given a fixed budget of VLM calls per source image, can detector evidence identify informative regions, and can a validation-calibrated gate reduce unsupported compact-VLM decisions when the crop changes? The distinction matters. The detector supplies localized evidence; the VLM is responsible for a constrained semantic record; and the gate decides whether that record is reliable enough to use. None of these components is treated as an agronomic authority.
+
+The evaluation uses two visually and geometrically different ornamental crops, Magnolia and Azalea. The relabeled corpus contains 297 Magnolia and 121 Azalea source images, with 15,644 and 14,198 usable boxes, respectively. Azalea has a higher median instance count (97 versus 57 plants per image) and a 44.1\% smaller median normalized box area. The crops also differ in greenness and spatial arrangement. We therefore treat crop identity as a domain shift rather than randomly mixing all tiles before splitting.
+
+Our contributions are:
+\begin{itemize}[leftmargin=*,nosep]
+    \item a Budgeted Evidence Selector for high-resolution aerial imagery that combines detector confidence and clipped local count while preserving an explicit exploration fraction;
+    \item a structured compact-VLM scouting task with hard-negative evaluation, repeated-generation consistency, and schema-level failure measurements;
+    \item a validation-only selective gate evaluated through risk--coverage analysis rather than a single confidence threshold; and
+    \item a source-safe cross-crop protocol with clustered confidence intervals, transfer matrices, edge-oriented latency and memory measurements, and equal-budget ablations.
+\end{itemize}
+
+The intended claim is algorithmic, not merely agricultural: localized evidence should be used to allocate scarce multimodal computation, and unsupported outputs should be reviewable rather than silently accepted.
+
+\begin{figure*}[t]
+    \centering
+    \resizebox{\textwidth}{!}{\input{figures/method_architecture}}
+    \caption{\textbf{OrnaScout overview.} Source images are partitioned before tiling. Detector confidence and clipped local count rank candidate tiles; the proposed selector combines top-ranked exploitation with controlled exploration under a fixed budget $K$. A model adapter and fixed-schema decoder produce auditable task records. Reliability signals enter a failure-risk gate fitted only on validation outcomes; accepted records are retained and the remainder are referred for review. Solid arrows denote test-time computation and dashed arrows denote supervision or validation-only fitting.}
+    \label{fig:architecture}
+\end{figure*}

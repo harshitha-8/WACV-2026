@@ -78,6 +78,7 @@ and mAP50-95 0.789; final reporting requires the frozen full protocol.
 ├── assets/                         # Homepage architecture and audit figures
 ├── configs/models.json             # Verified model identifiers and roles
 ├── docs/                            # Data, protocol, figure, and status notes
+├── submission/wacv2027/             # Audited paper and supplement release
 ├── adaptive_selector.py             # Fixed-budget evidence selection
 ├── detector_evidence.py             # Detector export, training, and inference
 ├── ornascout_pipeline_v2.py         # Preparation, merge, and evaluation logic
@@ -152,6 +153,13 @@ outputs only and frozen before test evaluation.
 
 See [RESULTS_STATUS.md](docs/RESULTS_STATUS.md) for the explicit boundary
 between completed measurements and pending experiments.
+
+## Submission Sources
+
+The audited WACV 2027 main-paper and supplementary Overleaf packages are kept
+in [`submission/wacv2027`](submission/wacv2027). That directory includes the
+unpacked source trees, the two upload-ready archives, and SHA-256 checksums.
+Intermediate manuscript exports and local build products remain excluded.
 
 ## Scientific Boundary
 

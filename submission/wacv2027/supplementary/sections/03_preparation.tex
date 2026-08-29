@@ -1,0 +1,53 @@
+\section{Source-Safe Preparation}
+\label{sec:preparation}
+
+\paragraph{Split before tiling.}
+Each source image is assigned to train, validation, or test before any crop is
+written.  All tiles and labels derived from one source inherit that assignment.
+The frozen seed is 2026.  The resulting split contains 302/58/58 source images
+and 10,570/2,030/2,030 tiles for train/validation/test.  The split is stratified
+by crop and source-level annotation density; sibling tiles cannot cross
+partitions.
+
+\paragraph{Overlapping tiling.}
+Images are tiled at $1024\!\times\!1024$ pixels with 25\% overlap.  For a source
+box $b$ and tile $t$, let
+\begin{equation}
+v(b,t)=\frac{\operatorname{area}(b\cap t)}{\operatorname{area}(b)}.
+\label{eq:visible}
+\end{equation}
+The clipped box is assigned to $t$ when $v(b,t)\geq0.5$.  This rule retains
+partially visible plants while preventing small box fragments from becoming
+positive labels.  A retained box is marked boundary-truncated when its maximum
+visible fraction lies in $[0.5,0.98)$.  Empty tiles from labeled source images
+form the hard-negative set; 1,328 such tiles are present after preparation.
+
+\paragraph{Derived tasks.}
+For each tile, the annotation count induces the bins
+\(\{0,1\text{--}5,6\text{--}15,16\text{--}30,{>}30\}\).
+Density belongs to \{empty, sparse, moderate, dense\}; coverage belongs to
+\{none, low, medium, high\}.  These labels are generated deterministically from
+the separate ground-truth file.  They are never embedded in the inference
+manifest or prompt.  \Cref{alg:prepare} gives the complete preparation and
+separation procedure.
+
+\begin{algorithm}[t]
+\caption{Source-safe preparation}
+\label{alg:prepare}
+\begin{algorithmic}[1]
+\Require source images $\mathcal{I}$, labels $\mathcal{B}$, tile size $s$,
+overlap $o$, visible threshold $\tau$
+\Ensure inference manifest $\mathcal{M}$ and disjoint ground truth $\mathcal{G}$
+\State validate image--label pairs and reject malformed boxes
+\State assign each source $I$ to train, validation, or test
+\For{each source image $I$}
+  \State generate overlapping windows of size $s$ and stride $s(1-o)$
+  \For{each window $t$}
+    \State clip boxes to $t$ and retain those with $v(b,t)\geq\tau$
+    \State write RGB tile and inference prompt to $\mathcal{M}$
+    \State write task labels and provenance only to $\mathcal{G}$
+  \EndFor
+\EndFor
+\State assert that no source ID occurs in more than one split
+\end{algorithmic}
+\end{algorithm}

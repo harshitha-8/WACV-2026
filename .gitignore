@@ -23,3 +23,10 @@ paper_wacv_*/
 *.bib
 *.pdf
 *.zip
+
+# Audited, source-only WACV submission release.
+!submission/wacv2027/**/*.tex
+!submission/wacv2027/**/*.bib
+!submission/wacv2027/**/*.pdf
+!submission/wacv2027/OrnaScout_Submission.zip
+!submission/wacv2027/OrnaScout__Supplementary_Submission.zip

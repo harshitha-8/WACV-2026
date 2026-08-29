@@ -1,0 +1,46 @@
+\section{Reliability and Evaluation Protocol}
+\label{sec:eval}
+
+\paragraph{Task metrics.}
+We report macro-F1 for crop type, presence, count bin, density, and coverage,
+plus exact schema validity.  A task macro-F1 averages the five task-level
+macro-F1 values so that a dense count category cannot dominate the report.
+All intervals and paired differences cluster by source image.  Tile-level
+confidence intervals are not used because overlapping tiles are correlated.
+
+\paragraph{Repeat consistency.}
+For repeated generations $\{\hat y^{(r)}\}_{r=1}^{R}$ and categorical task set
+$\mathcal{K}$, consistency is the mean modal agreement
+\begin{equation}
+C=\frac{1}{|\mathcal{K}|}\sum_{k\in\mathcal{K}}
+\frac{1}{R}\max_{a}\sum_{r=1}^{R}\mathbf{1}[\hat y_k^{(r)}=a].
+\label{eq:consistency}
+\end{equation}
+The final experiment uses three generations under identical decoding settings.
+
+\paragraph{Risk score and abstention.}
+The fixed diagnostic score combines schema validity $s$, repeat consistency
+$C$, VLM confidence $p$, and detector agreement $d$:
+\begin{equation}
+u_{\mathrm{fixed}}=.35s+.25C+.20p+.20d.
+\label{eq:fixed-gate}
+\end{equation}
+The proposed gate is a validation-fitted failure predictor using the same
+signals.  Its threshold is selected on validation data and frozen before test
+evaluation.  We report risk--coverage curves, area under the risk--coverage
+curve (AURC), accepted risk, false-accept rate, and coverage.  Verified empty
+sources define the hallucination denominator; ordinary detector misses do not
+automatically become VLM hallucinations.
+
+\paragraph{Cross-crop protocols.}
+The complete matrix contains Magnolia$\rightarrow$Magnolia,
+Azalea$\rightarrow$Azalea, Magnolia$\rightarrow$Azalea,
+Azalea$\rightarrow$Magnolia, and pooled training/testing.  Model selection,
+selector choice, risk threshold, and prompt are frozen on training/validation
+sources for each protocol.  No test source contributes to threshold fitting.
+
+\paragraph{Efficiency.}
+Latency excludes download and reports model loading separately.  Runs record
+warm-up, batch size, precision, generation limit, hardware, and peak incremental
+memory.  Matched comparisons use the same budget and prompt; all-tile inference
+is an efficiency baseline, not a matched-input accuracy baseline.

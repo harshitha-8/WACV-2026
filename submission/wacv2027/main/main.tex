@@ -1,0 +1,36 @@
+% WACV 2027 Applications Track draft, built from the official author kit.
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+\usepackage[review,applications]{wacv}
+\input{preamble}
+
+\definecolor{wacvblue}{rgb}{0.21,0.49,0.74}
+\usepackage[breaklinks,colorlinks,allcolors=wacvblue]{hyperref}
+
+\def\wacvPaperID{2841}
+\def\confName{WACV}
+\def\confYear{2027}
+
+\title{OrnaScout: Budget-Aware UAV Visual Evidence Selection for Reliable\\
+Cross-Crop Nursery Monitoring with Compact Vision--Language Models}
+
+\author{Anonymous WACV submission}
+
+\begin{document}
+\maketitle
+\input{sec/0_abstract}
+\input{sec/1_introduction}
+\input{sec/2_related_work}
+\input{sec/3_method}
+\input{sec/4_experiments}
+\input{sec/5_results}
+\input{sec/6_discussion}
+
+% Keep all method and result figures ahead of the bibliography without
+% forcing an otherwise unnecessary blank column or page.
+\FloatBarrier
+{\small
+\bibliographystyle{ieeenat_fullname}
+\bibliography{references}
+}
+\end{document}

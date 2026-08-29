@@ -1,0 +1,25 @@
+\section{Annotation Review and Failure Taxonomy}
+\label{sec:audit}
+
+The automatic label audit checks pairing, normalized coordinates, zero-area
+boxes, frame excursions, empty labels, annotation density, normalized box
+area, and possible image duplication.  It does not prove semantic correctness.
+A separate review sheet therefore samples boxes across crop, source, box-size
+stratum, image boundary, and annotation-density stratum.  Reviewers mark
+correct, loose, tight, duplicate, wrong-object, or ambiguous.  Because the
+frozen artifacts do not contain adjudicated review sheets, this supplement
+makes no semantic annotation-acceptance claim.  This distinction prevents an
+automated format audit from being misreported as human semantic validation.
+
+\paragraph{Failure taxonomy.}
+Qualitative analysis uses balanced denominators.  Detector failures comprise
+misses, background false positives, duplicates, and boundary truncation; VLM
+failures comprise task errors, malformed schema, unsupported claims, and repeat
+inconsistency.  Gate outcomes distinguish correct/false acceptance from
+correct/unnecessary abstention.  Displayed cases identify crop, protocol,
+ground truth, prediction, selector, budget, and gate decision.
+
+Hard-negative mining may be evaluated as a detector-training ablation only
+when the mined negatives, held-out split, and before/after checkpoints are
+available under the same source-safe protocol.  Results from a separate
+pipeline or a screenshot are not merged into the reported experiment.

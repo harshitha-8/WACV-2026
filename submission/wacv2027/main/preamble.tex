@@ -1,0 +1,30 @@
+\usepackage{amsmath,amssymb,booktabs,multirow}
+\usepackage{graphicx}
+\usepackage{iftex}
+\ifPDFTeX\else
+  % Tectonic uses XeTeX locally; use the installed Times-compatible face.
+  % Overleaf/pdfLaTeX continues to use the official WACV Times setup.
+  \usepackage{fontspec}
+  \setmainfont{Times New Roman}
+\fi
+\usepackage{microtype}
+\usepackage{placeins}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{pifont}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds}
+
+% Result macros prevent unsupported claims from entering prose.
+\newcommand{\tbd}[1]{\textit{[pending: #1]}}
+\newcommand{\bestF}{\tbd{best cross-crop macro-F1}}
+\newcommand{\deltaF}{\tbd{gain over uniform routing}}
+\newcommand{\budgetSave}{\tbd{VLM-call reduction}}
+\newcommand{\targetCoverage}{\tbd{coverage at target risk}}
+\newcommand{\modelWinner}{\tbd{best compact model}}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+\newcommand{\wacvtablefont}{\footnotesize}

@@ -1,0 +1,106 @@
+\section{Method}
+\subsection{Problem setup and scientific scope}
+Let a source UAV image be $I_i$ with crop domain $d_i\in\{\mathrm{Magnolia},\mathrm{Azalea}\}$ and one-class instance boxes $\mathcal{B}_i$. These boxes supervise detector training and define evaluation targets; they are not exposed to the VLM during validation or testing. A tiling operator $\mathcal{T}_{s,\alpha}$ produces candidate tiles of side length $s$ and overlap $\alpha$. Source images are assigned to train, validation, or test partitions before tiling, so correlated tiles cannot cross partitions.
+
+For each source image, the system may submit at most $K$ tiles to a VLM. Its output is a fixed-schema scouting record containing plant presence, count bin, density, coverage, visible evidence, priority, confidence, and a review flag. The problem is selective task prediction under two constraints: a visual-computation budget and a crop-domain shift. It is not unrestricted caption generation and does not infer disease or management labels absent from the annotations.
+
+\subsection{Local detector evidence}
+A lightweight detector trained on source-safe training tiles returns detections $\mathcal{D}_t$ for tile $t$. We retain the number of predictions $n_t=|\mathcal{D}_t|$ and their mean confidence $c_t$. The implemented ranking score is
+\begin{equation}
+q_t=c_t+\frac{\min(n_t,n_{\max})}{n_{\max}},\qquad n_{\max}=20.
+\label{eq:evidence}
+\end{equation}
+The confidence term favors visually supported tiles; clipping prevents unusually dense regions from dominating the rank solely through count. The deliberately small evidence model makes the routing decision inspectable and permits confidence-only and count-only ablations.
+
+Following the use of hard examples to suppress persistent detector errors \cite{shrivastava2016ohem}, we additionally evaluate one training-only hard-negative mining round. Detector responses from training images are matched against the training annotations, and unmatched regions containing no labeled plant are incorporated as empty-label negatives during retraining. This refinement changes the detector evidence supplied to the selector, but it introduces no additional component into the test-time OrnaScout architecture.
+
+\subsection{Budgeted Evidence Selector}
+For candidate set $\mathcal{T}_i$, the selector allocates $K_e=\operatorname{round}(\rho K)$ exploration slots and $K_x=K-K_e$ exploitation slots. Exploitation retains the $K_x$ largest values of Eq.~\eqref{eq:evidence}; exploration samples without replacement from the remaining tiles using a fixed seed:
+\begin{align}
+\mathcal{X}_i &= \operatorname{TopK}_{K_x}(\mathcal{T}_i;q), \\
+\mathcal{E}_i &\sim \operatorname{Sample}_{K_e}(\mathcal{T}_i\setminus\mathcal{X}_i), \\
+\mathcal{S}_i &= \mathcal{X}_i\cup\mathcal{E}_i,\qquad |\mathcal{S}_i|\le K.
+\label{eq:router}
+\end{align}
+The exploration branch limits dependence on detector calibration and retains a chance of observing low-ranked but informative regions. Random, spatially uniform, and pure top-$K$ policies use the same $K$; consequently, differences measure evidence allocation rather than additional VLM input.
+
+\subsection{Source-level evidence audit}
+We evaluate routing before asking whether a VLM answers correctly. This separation is useful because a selector can fail by withholding relevant visual evidence even when the downstream model is capable. Let $b_j\in\mathcal{B}_i$ be an original source-image box and $v(b_j,t)\in[0,1]$ the fraction of its area visible in tile $t$. At visibility threshold $\eta=.5$, evidence recall is
+\begin{equation}
+R_{\mathrm{evid}}(i)=\frac{1}{|\mathcal{B}_i|}
+\sum_{b_j\in\mathcal{B}_i}\mathbb{1}\!\left[
+\max_{t\in\mathcal{S}_i}v(b_j,t)\ge\eta\right].
+\label{eq:evidence-recall}
+\end{equation}
+Boxes are counted once in source coordinates, avoiding duplicate credit from overlapping tiles. We also measure spatial coverage
+\begin{equation}
+C_{\mathrm{sp}}(i)=
+\frac{\left|\bigcup_{t\in\mathcal{S}_i}\Omega_t\right|}{|\Omega_i|},
+\label{eq:spatial-coverage}
+\end{equation}
+and overlap redundancy
+\begin{equation}
+D_{\mathrm{red}}(i)=
+\frac{\sum_{t\in\mathcal{S}_i}|\Omega_t|}
+{\left|\bigcup_{t\in\mathcal{S}_i}\Omega_t\right|}-1.
+\label{eq:redundancy}
+\end{equation}
+Boundary truncation is the fraction of covered instances whose maximum visible fraction lies in $[\eta,.98)$. Hard-negative recall records the proportion of available empty tiles retained by the selector. A ground-truth oracle and a shuffled-score selector are diagnostic controls only: neither is a deployable method.
+
+\begin{algorithm}[t]
+\caption{Budgeted routing and selective VLM inference}
+\label{alg:ornascout}
+\begin{algorithmic}[1]
+\Require Image $I_i$; detector $f_D$; VLM $f_V$; budget $K$; exploration $\rho$; gate $h_{\tau^*}$
+\Ensure Accepted records $\mathcal{A}_i$; review set $\mathcal{R}_i$
+\State $\mathcal{T}_i\gets\mathcal{T}_{s,\alpha}(I_i)$
+\ForAll{$t\in\mathcal{T}_i$}
+  \State $(c_t,n_t)\gets f_D(t)$; compute $q_t$ using Eq.~\eqref{eq:evidence}
+\EndFor
+\State $K_e\gets\operatorname{round}(\rho K)$; $K_x\gets K-K_e$
+\State $\mathcal{X}_i\gets\operatorname{TopK}_{K_x}(\mathcal{T}_i;q)$
+\State $\mathcal{E}_i\gets\operatorname{Sample}_{K_e}(\mathcal{T}_i\setminus\mathcal{X}_i)$
+\ForAll{$t\in\mathcal{X}_i\cup\mathcal{E}_i$}
+  \State $z_t\gets\operatorname{DecodeSchema}(f_V(t,p))$
+  \State $u_t\gets[s_{\mathrm{sch}},s_{\mathrm{con}},s_{\mathrm{det}},c_t^{\mathrm{vlm}}]$
+  \If{$h_{\tau^*}(u_t)=\mathrm{accept}$}
+    \State $\mathcal{A}_i\gets\mathcal{A}_i\cup\{z_t\}$
+  \Else
+    \State $\mathcal{R}_i\gets\mathcal{R}_i\cup\{(t,z_t)\}$
+  \EndIf
+\EndFor
+\State \Return $\mathcal{A}_i,\mathcal{R}_i$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Model-agnostic structured inference}
+Each $t\in\mathcal{S}_i$ and a frozen instruction $p$ are passed through one VLM adapter. The same image evidence, prompt, decoding budget, and schema are used for SmolVLM2, Phi-3.5-Vision, and LLaVA. The parser does not silently repair malformed responses. For a generation $z$, exact schema validity is
+\begin{equation}
+s_{\mathrm{sch}}(z)=\frac{1}{J}\sum_{j=1}^{J}\mathbb{1}\{g_j(z)=1\},\qquad J=9,
+\label{eq:schema}
+\end{equation}
+where $g_j$ checks one required field or constraint. With $R>1$ generations, repeat consistency averages modal agreement over the five categorical task fields $\mathcal{F}$:
+\begin{equation}
+s_{\mathrm{con}}(t)=\frac{1}{|\mathcal{F}|}\sum_{k\in\mathcal{F}}
+\frac{\max_v\sum_{r=1}^{R}\mathbb{1}[z_{t,r,k}=v]}{R}.
+\label{eq:consistency}
+\end{equation}
+Detector agreement $s_{\mathrm{det}}$ measures agreement on presence and count bin when detector evidence is available.
+
+\subsection{Evidence-calibrated selective decision}
+An interpretable fixed baseline combines available evidence as
+\begin{equation}
+g_t=.35s_{\mathrm{sch}}+.25s_{\mathrm{con}}+.20c_t^{\mathrm{vlm}}+.20s_{\mathrm{det}},
+\label{eq:fixedgate}
+\end{equation}
+with weights renormalized when a component is unavailable. The proposed gate fits a class-balanced logistic failure model on validation records only, using $[s_{\mathrm{sch}},s_{\mathrm{con}},s_{\mathrm{det}},g_t]$. If $\hat r_t$ is predicted error probability, the threshold is chosen before test evaluation:
+\begin{equation}
+\tau^*=\max_{\tau}\left\{\tau:
+\frac{\sum_t\mathbb{1}[\hat r_t\le\tau]e_t}
+{\max(1,\sum_t\mathbb{1}[\hat r_t\le\tau])}\le\epsilon\right\}.
+\label{eq:threshold}
+\end{equation}
+Records with $\hat r_t>\tau^*$ are referred for review. This is empirical validation control, not a distribution-free guarantee under crop shift.
+
+\subsection{Source-level reduction}
+Tile records are grouped by source image for clustered uncertainty estimates. A deployable source record additionally requires a frozen overlap-aware reducer. Our planned reducer uses confidence-weighted voting over accepted records and coordinate-aware fusion of detector counts; a source with no accepted record is referred for review. Until that reducer is implemented and evaluated, we report tile-task results and source-clustered intervals, but no unsupported source-level accuracy.

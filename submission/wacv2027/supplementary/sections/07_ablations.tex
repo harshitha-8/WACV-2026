@@ -1,0 +1,53 @@
+\section{Controlled Ablation Matrix}
+\label{sec:ablation}
+
+The ablation design changes one factor at a time while preserving source
+splits, ground truth, prompt, generation limit, and source-level bootstrap
+protocol.  Table~\ref{tab:ablations} distinguishes the measured selector
+evidence analysis from model-dependent evaluation components.  Only the former
+is used for quantitative claims in this supplement.
+
+\begin{table*}[t]
+\centering
+\caption{Controlled factors and their scientific questions.  ``Measured''
+denotes the frozen validation evidence audit; ``protocol'' denotes an
+evaluation definition without a quantitative claim in this supplement.}
+\label{tab:ablations}
+\small
+\begin{tabularx}{.98\textwidth}{lYYl}
+\toprule
+Factor & Compared settings & Primary response & Evidence status \\
+\midrule
+Selection rule & random, spatial, confidence, count, combined, exploit--explore
+& evidence recall, coverage, redundancy, hard-negative recall & measured \\
+Visual budget & $K\in\{1,2,4,8,16\}$
+& task F1 versus latency/memory and evidence recall & measured routing \\
+Exploration & $\rho\in\{0,.10,.25,.50\}$
+& recall--redundancy--negative-retention trade-off & measured routing \\
+Tile geometry & size and overlap sweep
+& boundary truncation, task F1, source cost & protocol \\
+Gate signals & schema; +consistency; +detector; fitted gate
+& AURC, false accepts, accepted risk, coverage & protocol \\
+Generation repeats & one versus three
+& consistency, latency, accepted risk & protocol \\
+Model capacity & 500M, 2.2B, Phi-3.5-V, LLaVA-7B
+& matched-budget task F1, schema validity, memory & protocol \\
+Cross-crop direction & M$\rightarrow$A, A$\rightarrow$M, within-crop, pooled
+& transfer gap and failure composition & protocol \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\paragraph{Paired reporting.}
+Selector comparisons are paired by source image.  For each bootstrap resample,
+we sample source IDs with replacement, retain all associated tiles, and compute
+the difference between methods.  This directly estimates whether a routing
+change helps the same aerial scenes.  Mean$\pm$standard-deviation over tiles is
+not used as a substitute for source-clustered uncertainty.
+
+\paragraph{Operating-point discipline.}
+The full sweep accompanies the single validation-selected operating point and
+its trade-off curve.  No operating point is changed after inspecting the test
+set.  Because the chosen selector is not best on every validation metric, it is
+interpreted through the stated recall, redundancy, and negative-retention
+trade-off rather than as uniformly dominant.

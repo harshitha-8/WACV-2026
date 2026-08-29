@@ -1,0 +1,30 @@
+\section{Reproducibility Checklist}
+\label{sec:repro}
+
+The anonymous release record comprises source manifests and hashes; annotation
+and rejected-row audits; separate tile, ground-truth, and inference manifests;
+the exact prompt, schema, model revisions, and decoding settings; selector
+parameters, seeds, and per-source selections; complete prediction JSONL files,
+including failures; source-level metrics and bootstrap seeds; gate thresholds;
+hardware and efficiency logs; and the scripts generating every table and
+figure.
+
+\paragraph{Minimum commands.}
+The data preparation and validation selector audit can be reproduced through
+the repository entry point:
+\begin{verbatim}
+python wacv_pipeline.py inspect
+python wacv_pipeline.py prepare
+python wacv_pipeline.py eda
+python wacv_pipeline.py selector-audit \
+  --scope combined --split val
+\end{verbatim}
+Full VLM commands specify model, split, selector, budget, exploration, repeat
+count, device, and generation limit.  Test evaluation is separated from
+validation-based selector and threshold selection.
+
+\paragraph{Submission audit.}
+This review supplement contains no author names, institutional paths, account
+identifiers, acknowledgments, or public repository links.  It contains only
+material derived from the submitted method and frozen experiments and does not
+introduce a post-deadline method change or new dataset.
