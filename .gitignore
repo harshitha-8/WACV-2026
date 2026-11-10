@@ -30,3 +30,7 @@ paper_wacv_*/
 !submission/wacv2027/**/*.pdf
 !submission/wacv2027/OrnaScout_Submission.zip
 !submission/wacv2027/OrnaScout__Supplementary_Submission.zip
+
+# Official IJCAI 2027 LaTeX author kit and revision sources.
+!submission/ijcai2027/**/*.tex
+!submission/ijcai2027/**/*.bib
