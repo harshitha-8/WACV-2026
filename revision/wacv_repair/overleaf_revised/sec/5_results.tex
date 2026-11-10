@@ -1,0 +1,120 @@
+\section{Results}
+\paragraph{Release rule.}
+Only values generated from frozen artifacts enter the final manuscript. Red dashes in this working revision identify required experiments; they are not zero values and must not be estimated manually.
+
+\subsection{Data integrity and detector evidence}
+The final version will first establish that source partitions are disjoint, that negative sources were reviewed, and that detector evidence is characterized by crop, object scale, and annotation density. Table~\ref{tab:data} will include the completed human-audit and detector-recall entries. Hard-negative mining will remain a supporting detector refinement unless its matched artifacts establish a reproducible gain.
+
+\draftnote{Insert duplicate/leakage audit, human-review agreement, detector M$\rightarrow$M, A$\rightarrow$A, M$\rightarrow$A, and A$\rightarrow$M results.}
+
+\subsection{Equal-budget evidence allocation}
+Table~\ref{tab:allocation} is designed to report the complete policy trade-off rather than select a winner from one metric. The final analysis will compare paired source-level differences against combined top-$K$ and coordinate-aware spatial selection. A policy will be described as preferable only for an explicitly stated operating objective.
+
+\begin{table*}[t]
+\centering
+\wacvtablefont
+\caption{Equal-budget source-level comparison at the validation-selected primary configuration. Exact is strict source-record accuracy; AURC is lower-is-better. All intervals and paired comparisons are clustered by source.}
+\label{tab:allocation}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lccccccc}
+\toprule
+Policy & Exact$\uparrow$ & Evid. rec.$\uparrow$ & Spatial cov.$\uparrow$ & Redund.$\downarrow$ & Hard-neg.$\uparrow$ & AURC$\downarrow$ & p95 ms$\downarrow$ \\
+\midrule
+Random & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+Spatial (2D) & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+Confidence top-$K$ & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+Count top-$K$ & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+Combined top-$K$ & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+Exploit--explore & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+Diversity-aware & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{figure}[t]
+\centering
+\fbox{\parbox[c][36mm][c]{0.93\columnwidth}{\centering
+\textbf{Pending artifact-generated policy Pareto plot}\\[2mm]
+Source utility versus accepted risk; marker annotations report budget and latency.}}
+\caption{\textbf{Allocation Pareto frontier.} The final figure will show paired source-level utility, risk, and compute for equal-budget routing policies.}
+\label{fig:pareto}
+\end{figure}
+
+\subsection{Does the VLM add source-level value?}
+Table~\ref{tab:vlmvalue} directly addresses the necessity of multimodal inference. Detector-only and deterministic aggregation are primary controls, not secondary ablations. The VLM claim will be retained only if source-level utility or selective behavior improves at a reported cost.
+
+\begin{table*}[t]
+\centering
+\wacvtablefont
+\caption{Source-level system comparison on the frozen pooled test protocol. Count error is reported continuously; FAR is false acceptance on verified negative sources.}
+\label{tab:vlmvalue}
+\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{lcccccccc}
+\toprule
+System & Pres. F1 & Count err.$\downarrow$ & Dens. F1 & Cov. F1 & Exact$\uparrow$ & FAR$\downarrow$ & Review$\downarrow$ & p95 ms$\downarrow$ \\
+\midrule
+Detector only & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & -- & \pendingcell \\
+Detector + rules & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & -- & \pendingcell \\
+Whole-image VLM & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+Uniform tiled VLM & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+OrnaScout, no gate & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & -- & \pendingcell \\
+OrnaScout + gate & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Directed crop transfer}
+Table~\ref{tab:transfer} reports each training--test direction separately. The final analysis will give the paired drop from the corresponding in-domain reference and decompose it into detector miss, routing miss, structured-prediction error, and rejection behavior. Object scale and density are diagnostic strata, not post-hoc causal proof.
+
+\begin{table}[t]
+\centering
+\wacvtablefont
+\caption{Directed source-level transfer. Each cell reports the primary utility with source-clustered 95\% interval; $\Delta$ is the paired drop from the corresponding in-domain reference.}
+\label{tab:transfer}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lcccc}
+\toprule
+Train & Test M & $\Delta$ & Test A & $\Delta$ \\
+\midrule
+Magnolia & \pendingcell & -- & \pendingcell & \pendingcell \\
+Azalea & \pendingcell & \pendingcell & \pendingcell & -- \\
+Pooled & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Selective reliability and review burden}
+Figure~\ref{fig:riskcoverage} will compare raw VLM confidence, strict-schema rejection, detector agreement, fixed-score ranking, and the cross-fitted learned gate. The operating point is selected from out-of-fold validation predictions before test scoring. The corresponding table reports coverage, accepted risk, negative-source false acceptance, accepted source count, and human-review rate.
+
+\begin{figure}[t]
+\centering
+\fbox{\parbox[c][39mm][c]{0.93\columnwidth}{\centering
+\textbf{Pending artifact-generated risk--coverage curves}\\[2mm]
+Raw confidence, schema-only, detector agreement, fixed score, learned gate; validation-selected operating point marked.}}
+\caption{\textbf{Held-out selective reliability.} Curves and intervals use source-level outcomes; lower risk at negligible coverage is not treated as operational success.}
+\label{fig:riskcoverage}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\wacvtablefont
+\caption{Held-out reliability at the predeclared target-risk operating point.}
+\label{tab:reliability}
+\setlength{\tabcolsep}{3.4pt}
+\begin{tabular}{lccccc}
+\toprule
+Score & AURC$\downarrow$ & Cov.$\uparrow$ & Risk$\downarrow$ & FAR$\downarrow$ & Accepted \\
+\midrule
+Raw confidence & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+Strict schema & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+Detector agreement & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+Fixed score & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+Learned gate & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Efficiency and failure analysis}
+End-to-end timing will separate tiling, detection, selection, image transfer, VLM generation, parsing, gating, and reduction. The failure audit uses a frozen, crop-balanced, size-balanced source sample. Categories are annotation issue, detector miss, routing miss, boundary truncation, malformed schema, task error, unsupported positive, reduction conflict, gate false accept, gate false reject, and correct abstention.
+
+\draftnote{Insert named-hardware efficiency table, failure counts with denominators and agreement, and frozen-rule qualitative panels.}

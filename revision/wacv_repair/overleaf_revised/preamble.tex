@@ -1,0 +1,28 @@
+\usepackage{amsmath,amssymb,booktabs,multirow}
+\usepackage{graphicx}
+\usepackage{iftex}
+\ifPDFTeX\else
+  % Tectonic uses XeTeX locally; use the installed Times-compatible face.
+  % Overleaf/pdfLaTeX continues to use the official WACV Times setup.
+  \usepackage{fontspec}
+  \setmainfont{Times New Roman}
+\fi
+\usepackage{microtype}
+\usepackage{placeins}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{pifont}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds}
+
+% Visible draft markers prevent incomplete results from entering a submission.
+\newcommand{\pending}[1]{\textcolor{red!75!black}{\textbf{[PENDING: #1]}}}
+\newcommand{\pendingcell}{\textcolor{red!75!black}{--}}
+\newcommand{\draftnote}[1]{\par\noindent\colorbox{yellow!20}{%
+  \parbox{0.96\linewidth}{\textbf{Draft requirement:} #1}}\par}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+\newcommand{\wacvtablefont}{\footnotesize}

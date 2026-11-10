@@ -1,0 +1,26 @@
+\section{Introduction}
+Nursery inventory from unmanned aerial vehicles (UAVs) is a high-resolution, small-object problem. A single RGB frame may contain many repeated plants, partial crowns, shadows, ground fabric, and row-edge truncation. A detector can localize annotated plants, but converting thousands of local responses into one auditable source-level record still requires decisions about where to inspect, how to reconcile overlapping evidence, and when the available evidence is insufficient. These decisions become more difficult when canopy geometry, plant density, and object scale change across crops.
+
+Compact vision--language models (VLMs) offer a common interface for structured visual questions, but their visual context is poorly matched to 5K aerial frames. Whole-image downsampling can erase small instances; exhaustive tiling repeats overlapping regions and makes VLM cost grow with image size; and syntactically valid outputs can remain visually unsupported. Bounded inference is therefore not merely a deployment convenience: it determines which visual evidence can influence the final decision~\cite{kode2026drone}.
+
+We study the following falsifiable problem. Given a source image and a fixed budget of at most $K$ VLM calls, which regions should be inspected, what source-level inventory record can be supported, and when should the system abstain? OrnaScout separates four responsibilities. A detector supplies inexpensive local evidence over all candidate tiles. A selector allocates the expensive VLM budget. A structured decoder and overlap-aware reducer produce one source record. A validation-fitted gate decides whether that record should be accepted or reviewed. The gate acts after generation and is evaluated as a safety mechanism, not as a source of VLM-call savings.
+
+The agricultural scope is deliberately bounded. The available annotations support plant presence, count-oriented inventory, canopy-density, and annotated-coverage targets. They do not support disease, stress, mortality, quality, or treatment recommendations. The central scientific question is therefore not whether a VLM is an agronomic expert. It is whether structured multimodal evidence provides measurable source-level value beyond detector-only aggregation under a fixed budget and crop shift.
+
+The evaluation uses Magnolia and Azalea as directed visual domains rather than mixing their tiles before splitting. The two crops differ in source-level instance density, normalized object scale, appearance, and spatial organization. All partitions are formed at source-image level before overlapping tiling. The study reports within-crop, cross-crop, and pooled protocols, with uncertainty clustered by source image.
+
+Our contributions are:
+\begin{itemize}[leftmargin=*,nosep]
+    \item a fixed-budget evidence-allocation formulation that compares detector ranking, true spatial diversity, and controlled exploration at identical VLM cost;
+    \item a complete source-level pipeline that contrasts detector-only aggregation with structured compact-VLM inference and overlap-aware reduction; and
+    \item a source-disjoint evaluation of directed crop transfer and selective prediction using paired, source-clustered uncertainty and end-to-end efficiency.
+\end{itemize}
+
+The contribution is both systems-oriented and empirical: it treats evidence allocation and acceptance as coupled decisions and measures the resulting trade-off among foreground evidence, spatial diversity, negative evidence, accepted risk, review burden, and compute.
+
+\begin{figure*}[t]
+    \centering
+    \resizebox{\textwidth}{!}{\input{figures/method_architecture}}
+    \caption{\textbf{OrnaScout overview.} Source images are partitioned before overlapping tiling. A detector evaluates all candidates; equal-budget policies allocate at most $K$ VLM calls. Structured tile records pass through a validation-fitted failure gate and an overlap-aware reducer to form one accepted source record or a review referral. The detector-only path is retained as a controlled baseline. Solid arrows denote deployment computation; dashed arrows denote training or validation-only fitting.}
+    \label{fig:architecture}
+\end{figure*}

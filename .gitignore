@@ -34,3 +34,9 @@ paper_wacv_*/
 # Official IJCAI 2027 LaTeX author kit and revision sources.
 !submission/ijcai2027/**/*.tex
 !submission/ijcai2027/**/*.bib
+
+# Reviewer-driven WACV Overleaf revision package.
+!revision/wacv_repair/overleaf_revised/**/*.tex
+!revision/wacv_repair/overleaf_revised/**/*.bib
+!revision/wacv_repair/overleaf_revised/**/*.pdf
+!revision/wacv_repair/OrnaScout_WACV_Revised_Overleaf_Draft.zip

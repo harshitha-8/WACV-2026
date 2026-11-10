@@ -1,0 +1,108 @@
+\section{Method}
+\subsection{Problem formulation and cost}
+Let source image $I_i$ belong to crop domain $d_i$ and occupy valid pixel domain $\Omega_i$. A tiling operator $\mathcal{T}_{s,\alpha}$ produces candidate tiles $\mathcal{T}_i$ with clipped source-coordinate footprints $\Omega_t\subseteq\Omega_i$ and centers $x_t$. Source images are partitioned before tiling. The system may submit at most $K$ tiles to a VLM and must return one structured inventory record $y_i$ or a review decision.
+
+The output fields are plant presence, count interval, canopy-density class, annotated-coverage class, visible-evidence summary, and review status. These targets describe inventory evidence; they do not represent plant health or a management recommendation. For candidate-tile detector cost $C_D$, selected-tile VLM cost $C_V$, and source reduction cost $C_R$, the measured source cost is
+\begin{equation}
+C(i)=|\mathcal{T}_i|C_D+|\mathcal{S}_i|C_V+C_R,
+\qquad |\mathcal{S}_i|\leq K.
+\label{eq:cost}
+\end{equation}
+Selection controls the expensive second term. Rejection occurs after generation and is evaluated as risk control rather than compute saving.
+
+\subsection{Detector evidence and controlled baselines}
+A detector trained only on training sources returns source-coordinate detections $\mathcal{D}_t$, their count $n_t=|\mathcal{D}_t|$, and mean retained confidence $c_t$. After confidence thresholding and non-maximum suppression, the ranking score is
+\begin{equation}
+q_t=c_t+\frac{\min(n_t,n_{\max})}{n_{\max}}.
+\label{eq:evidence}
+\end{equation}
+The clipping value $n_{\max}$ and all detector post-processing parameters are chosen on validation sources. Confidence-only, count-only, and normalized combined scores isolate the contribution of each term. A detector-only baseline maps fused source-coordinate boxes directly to all derivable output fields and never invokes a VLM.
+
+Training-only hard-negative mining adds unmatched detector responses from empty training regions. No validation or test annotation is used to create negatives. The refined detector is assessed separately so that its gain is not attributed to evidence allocation.
+
+\subsection{Fixed-budget evidence allocation}
+The exploit--explore policy assigns $K_e=\operatorname{round}(\rho K)$ slots to exploration and $K_x=K-K_e$ to exploitation:
+\begin{align}
+\mathcal{X}_i &= \operatorname{TopK}_{K_x}(\mathcal{T}_i;q), \\
+\mathcal{E}_i &\sim \operatorname{Sample}_{K_e}(\mathcal{T}_i\setminus\mathcal{X}_i), \\
+\mathcal{S}_i &= \mathcal{X}_i\cup\mathcal{E}_i.
+\label{eq:selector}
+\end{align}
+Sampling uses a seed derived from the study seed, source identifier, and repetition, making the result invariant to manifest order. If fewer than $K$ candidates exist, all candidates are retained.
+
+Equal-budget controls include random sampling, confidence top-$K$, count top-$K$, combined-score top-$K$, and two geometry-aware policies. Spatial selection applies farthest-point sampling to normalized tile centers $x_t$, while diversity-aware exploration selects remaining tiles using distance from the exploited set and detector-score uncertainty. Ground-truth routing and shuffled detector scores are diagnostic controls only. The method does not assume that exploit--explore is uniformly optimal; policy selection is frozen from validation utility--risk trade-offs.
+
+\subsection{Source-level evidence diagnostics}
+Let $\mathcal{B}_i$ be the one-class source annotations and $v(b,t)$ the intersection area between box $b$ and tile footprint $\Omega_t$, divided by the unclipped area of $b$. At visibility threshold $\eta$, source evidence recall is
+\begin{equation}
+R_{\mathrm{evid}}(i)=\frac{1}{|\mathcal{B}_i|}
+\sum_{b\in\mathcal{B}_i}\mathbb{1}\!\left[
+\max_{t\in\mathcal{S}_i}v(b,t)\geq\eta\right].
+\label{eq:evidence-recall}
+\end{equation}
+Each source box receives credit at most once. Spatial coverage and overlap redundancy are
+\begin{align}
+C_{\mathrm{sp}}(i)&=\frac{|\bigcup_{t\in\mathcal{S}_i}\Omega_t|}{|\Omega_i|}, \\
+D_{\mathrm{red}}(i)&=
+\frac{\sum_{t\in\mathcal{S}_i}|\Omega_t|}
+{|\bigcup_{t\in\mathcal{S}_i}\Omega_t|}-1.
+\label{eq:spatial}
+\end{align}
+Boundary truncation records covered instances with maximum visible fraction in $[\eta,.98)$; hard-negative recall records the fraction of verified empty candidates retained. These diagnostics measure available evidence, not task correctness.
+
+\subsection{Structured multimodal inference}
+Each selected tile and one frozen instruction are passed to the same model-specific adapter. The schema fixes field names, types, allowed categorical values, count intervals, and cross-field constraints. The parser records malformed output without silently repairing it. For generation $z$, constraint satisfaction and strict validity are distinct:
+\begin{align}
+s_{\mathrm{constr}}(z)&=\frac{1}{J}\sum_{j=1}^{J}\mathbb{1}[g_j(z)=1], \\
+v_{\mathrm{schema}}(z)&=\prod_{j=1}^{J}\mathbb{1}[g_j(z)=1].
+\label{eq:schema}
+\end{align}
+With $R$ generations, repeat consistency averages modal agreement over the categorical task fields $\mathcal{F}$:
+\begin{equation}
+s_{\mathrm{rep}}(t)=\frac{1}{|\mathcal{F}|}
+\sum_{k\in\mathcal{F}}
+\frac{\max_v\sum_{r=1}^{R}\mathbb{1}[z_{t,r,k}=v]}{R}.
+\label{eq:consistency}
+\end{equation}
+Malformed or missing fields are retained as explicit disagreement. Detector agreement $s_{\mathrm{det}}$ compares VLM presence and count interval with fused detector evidence.
+
+\subsection{Overlap-aware source reduction}
+Detector boxes from selected overlapping tiles are projected to source coordinates and fused once using a validation-selected overlap threshold. Categorical VLM fields are aggregated by reliability-weighted voting; continuous or ordinal fields use a weighted median, and field conflicts are retained as reducer features. The reducer returns a source record $\tilde y_i$ and reliability vector
+\begin{equation}
+u_i=[\bar v_{\mathrm{schema}},\bar s_{\mathrm{constr}},
+\bar s_{\mathrm{rep}},\bar s_{\mathrm{det}},s_{\mathrm{conflict}},
+s_{\mathrm{support}}].
+\label{eq:sourcefeatures}
+\end{equation}
+If no valid tile record remains, the source is referred for review. Reducer rules, overlap threshold, and field weights are frozen on validation sources.
+
+\subsection{Validation-only selective decision}
+A transparent fixed baseline averages the available reliability signals after orienting each so that larger is safer. The learned gate estimates source-record error probability $\hat r_i=h(u_i)$. To avoid fitting and thresholding on the same outcomes, source-grouped cross-fitting produces out-of-fold validation risks. For predeclared target risk $\epsilon$, the threshold is
+\begin{equation}
+\tau^*=\max_{\tau}\left\{\tau:
+\frac{\sum_i\mathbb{1}[\hat r_i\leq\tau]e_i}
+{\max(1,\sum_i\mathbb{1}[\hat r_i\leq\tau])}\leq\epsilon\right\},
+\label{eq:threshold}
+\end{equation}
+where $e_i=1$ when any required source-level task field is incorrect. After features and $\tau^*$ are frozen, the gate is refit on all validation sources and evaluated once on test sources. Records with $\hat r_i\leq\tau^*$ are accepted; all others are referred for review. This is empirical validation calibration, not a distribution-free guarantee after crop shift.
+
+\begin{algorithm}[t]
+\caption{Fixed-budget source inference with selective review}
+\label{alg:ornascout}
+\begin{algorithmic}[1]
+\Require Source image $I_i$, detector $f_D$, VLM $f_V$, budget $K$, frozen policy $\pi$, reducer $A$, gate $h_{\tau^*}$
+\Ensure Source record $\tilde y_i$ and decision $a_i\in\{\mathrm{accept},\mathrm{review}\}$
+\State $\mathcal{T}_i\gets\mathcal{T}_{s,\alpha}(I_i)$
+\ForAll{$t\in\mathcal{T}_i$}
+  \State $\mathcal{D}_t\gets f_D(t)$; compute detector evidence
+\EndFor
+\State $\mathcal{S}_i\gets\pi(\mathcal{T}_i,\{\mathcal{D}_t\},K)$
+\State $\mathcal{Z}_i\gets\emptyset$
+\ForAll{$t\in\mathcal{S}_i$}
+  \State $\mathcal{Z}_i\gets\mathcal{Z}_i\cup\{\operatorname{Decode}(f_V(t,p))\}$
+\EndFor
+\State $(\tilde y_i,u_i)\gets A(\mathcal{Z}_i,\{\mathcal{D}_t\})$
+\State $a_i\gets\mathrm{accept}$ if $h(u_i)\leq\tau^*$, else $\mathrm{review}$
+\State \Return $\tilde y_i,a_i$
+\end{algorithmic}
+\end{algorithm}
