@@ -18,7 +18,7 @@ Table~\ref{tab:allocation} is designed to report the complete policy trade-off r
 \setlength{\tabcolsep}{5pt}
 \begin{tabular}{lccccccc}
 \toprule
-Policy & Exact$\uparrow$ & Evid. rec.$\uparrow$ & Spatial cov.$\uparrow$ & Redund.$\downarrow$ & Hard-neg.$\uparrow$ & AURC$\downarrow$ & p95 ms$\downarrow$ \\
+Policy & Exact$\uparrow$ & Evid. rec.$\uparrow$ & Spatial cov.$\uparrow$ & Redund.$\downarrow$ & Neg. ret.$\uparrow$ & AURC$\downarrow$ & p95 ms$\downarrow$ \\
 \midrule
 Random & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
 Spatial (2D) & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \pendingcell \\
@@ -64,17 +64,17 @@ OrnaScout + gate & \pendingcell & \pendingcell & \pendingcell & \pendingcell & \
 \end{table*}
 
 \subsection{Directed crop transfer}
-Table~\ref{tab:transfer} reports each training--test direction separately. The final analysis will give the paired drop from the corresponding in-domain reference and decompose it into detector miss, routing miss, structured-prediction error, and rejection behavior. Object scale and density are diagnostic strata, not post-hoc causal proof.
+Table~\ref{tab:transfer} reports each training--test direction separately. Method comparisons on the same target sources use paired uncertainty; the change between different target-crop test sets is reported descriptively as a domain gap, not an image-paired effect. The analysis decomposes detector miss, routing miss, structured-prediction error, and rejection behavior. Object scale and density are diagnostic strata, not post-hoc causal proof.
 
 \begin{table}[t]
 \centering
 \wacvtablefont
-\caption{Directed source-level transfer. Each cell reports the primary utility with source-clustered 95\% interval; $\Delta$ is the paired drop from the corresponding in-domain reference.}
+\caption{Directed source-level transfer. Each cell reports the primary utility with source-clustered 95\% interval; $\Delta_{\rm dom}$ is the descriptive gap from the corresponding in-domain protocol. Paired method contrasts are computed only on shared target sources.}
 \label{tab:transfer}
 \setlength{\tabcolsep}{5pt}
 \begin{tabular}{lcccc}
 \toprule
-Train & Test M & $\Delta$ & Test A & $\Delta$ \\
+Train & Test M & $\Delta_{\rm dom}$ & Test A & $\Delta_{\rm dom}$ \\
 \midrule
 Magnolia & \pendingcell & -- & \pendingcell & \pendingcell \\
 Azalea & \pendingcell & \pendingcell & \pendingcell & -- \\

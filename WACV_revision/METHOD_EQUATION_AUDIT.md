@@ -16,6 +16,8 @@ q_t = c_t + min(n_t, n_max) / n_max, n_max = 20
 - State the score range and tie-breaking rule.
 - Compare confidence, count, normalized combination, and learned validation-only
   ranking.
+- Define zero detections, valid-footprint clipping, padding, truncated boxes,
+  saturation frequency, and deterministic ties.
 
 ### Implementation issue
 
@@ -32,6 +34,8 @@ score calibration by crop. Add crop-stratified score diagnostics.
 - Report K and rho selection using validation data only.
 - Replace "exploration protects against detector errors" with a testable
   hypothesis.
+- Define `K_i=min(K, |T_i|)`, rounding, pool shortages, candidate-manifest
+  equality, and whether selected sets are nested across budgets.
 
 ### Implementation issue
 
@@ -46,6 +50,8 @@ selection is order invariant.
 - Explain clipping at image boundaries.
 - Report empty-source behavior separately.
 - Use source-level aggregation and source-clustered intervals.
+- Mark the metric undefined for empty sources and report negative-source
+  behavior separately.
 
 ## Equations 6--7: spatial coverage and redundancy
 
@@ -60,6 +66,10 @@ The current "spatial uniform" policy selects evenly spaced entries after
 sorting by tile ID. That is not guaranteed to be uniform in 2D geometry.
 Replace it with a coordinate-aware policy, such as farthest-point sampling over
 tile centers or a fixed spatial grid, and document its deterministic behavior.
+
+Report negative retention and selected-negative fraction separately; their
+denominators answer different questions. Define empty-union behavior and remove
+padding from area calculations.
 
 ## Equation 8: schema score
 
@@ -82,6 +92,8 @@ Do not label their mean as "Schema valid rate."
 - State how malformed/missing values enter agreement.
 - Report whether repeats are independently sampled and at what temperature.
 - Compare one versus three generations as a cost/reliability ablation.
+- When `R=1`, report consistency as unavailable rather than one.
+- Freeze whether the delivered output is the first generation or a consensus.
 
 ## Equation 10: fixed reliability score
 
@@ -119,6 +131,10 @@ The target risk must be declared before test evaluation. Report uncertainty,
 coverage, accepted errors, and accepted source count. Complete the sentence
 after the equation.
 
+Require a predeclared minimum accepted count or coverage. If no threshold meets
+the target, report the target as unattained; never let an empty accepted set
+appear to have zero empirical risk.
+
 ## Equation 12: AURC
 
 - Define sort direction and tie handling.
@@ -137,3 +153,6 @@ after the equation.
 - Return one source record, its acceptance decision, and tile-level audit trail.
 - Include detector-only path for baseline evaluation.
 - State failure behavior for malformed output and zero accepted records.
+- Include prompt/schema version, repeat generation, raw-output preservation,
+  tile coordinates, valid footprints, deterministic seed, and stage costs.
+- Keep gate fitting and threshold calibration outside test-time pseudocode.

@@ -4,7 +4,7 @@
 
 | Reviewer concern | Evidence in current paper | Required correction | Completion evidence |
 |---|---|---|---|
-| Cross-crop claim unsupported | Section 5.4 contains instructions | Run and report M->M, A->A, M->A, A->M plus pooled | 2x2 matrix, paired drops, source CIs |
+| Cross-crop claim unsupported | Section 5.4 contains instructions | Run and report M->M, A->A, M->A, A->M plus pooled | 2x2 matrix, domain gaps, source CIs; paired method contrasts only on shared targets |
 | Selective reliability unsupported | Section 5.5 contains instructions | Complete raw/schema/fixed/learned risk--coverage comparison | Curves, operating point, FAR, accepted sources |
 | Source pipeline incomplete | Section 3.7 says reducer is planned | Implement frozen overlap-aware source reducer | Unit tests and source-level table |
 | Exploit--explore not consistently best | Count/combined policies win direct metrics | Present Pareto trade-off and test diversity-aware alternatives | Paired utility-risk comparisons |

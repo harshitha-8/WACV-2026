@@ -57,7 +57,7 @@ Columns:
 - source exact-record accuracy or primary utility;
 - evidence recall;
 - spatial diversity/redundancy;
-- hard-negative recall;
+- negative retention and selected-negative fraction;
 - AURC;
 - p95 end-to-end latency.
 
@@ -87,8 +87,9 @@ This table decides whether the VLM claim survives.
 **New and mandatory.**
 
 Use a 2x2 train/test block for Magnolia and Azalea, plus pooled training.
-Report the primary source-level metric, accepted risk/coverage, and paired drop
-from the corresponding within-crop model.
+Report the primary source-level metric, accepted risk/coverage, and domain gap
+from the corresponding within-crop protocol. Use paired uncertainty only for
+method comparisons on the same target sources.
 
 ### Table 5 - Reliability operating point
 

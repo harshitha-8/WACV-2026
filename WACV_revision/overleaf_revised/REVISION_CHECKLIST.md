@@ -8,6 +8,10 @@
 - [ ] The primary source-level endpoint is approved and defined.
 - [ ] Exploit--explore is presented as a trade-off policy, not an assumed winner.
 - [ ] Cross-crop and reliability language matches completed evidence.
+- [ ] A definitive schema table identifies every evaluated, audit-only, gate,
+      and unsupported field.
+- [ ] The source prediction, inspected-region union, and uninspected state are
+      distinct.
 
 ## System definition
 
@@ -18,6 +22,10 @@
 - [ ] Strict schema validity is separated from constraint satisfaction.
 - [ ] The gate uses source-grouped validation cross-fitting.
 - [ ] Selection cost savings and post-generation safety are reported separately.
+- [ ] The executable implementation matches the corrected manuscript; planned
+      components are not written in the past tense.
+- [ ] The repeat-consensus rule and R=1 behavior are frozen.
+- [ ] Empty accepted sets cannot be reported as zero empirical risk.
 
 ## Evaluation
 
@@ -29,6 +37,9 @@
 - [ ] End-to-end latency, memory, throughput, VLM calls, and review burden are
       measured on named hardware.
 - [ ] Failure taxonomy reports counts, denominators, and agreement.
+- [ ] Protocol matrix names training, tuning, fitting, threshold, and test data
+      for every directed transfer run.
+- [ ] Method comparisons are paired only on shared target sources.
 
 ## Paper structure
 
@@ -49,6 +60,8 @@
 - [ ] All confidence intervals use source-level resampling where specified.
 - [ ] Test data were not used to select policies, bins, prompts, thresholds, or
       checkpoints.
+- [ ] Every table row and figure series has a completed row in
+      `RESULT_PROVENANCE_REGISTRY.csv`.
 
 ## Data and reproducibility
 

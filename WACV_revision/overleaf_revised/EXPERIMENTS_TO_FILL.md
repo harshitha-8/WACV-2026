@@ -1,5 +1,14 @@
 # Required Experiments and Destination Cells
 
+## Before model experiments
+
+- approve the source-level task and schema;
+- generate one immutable ground-truth row per source;
+- audit source/sequence/flight correlation and freeze group splits;
+- implement and test detector-only source prediction, corrected selectors,
+  source reduction, strict validation, and cross-fitted gating; and
+- register every output in `RESULT_PROVENANCE_REGISTRY.csv`.
+
 ## Table 1: corpus and detector evidence
 
 - source split by crop;
@@ -16,7 +25,7 @@ diversity-aware policies:
 - evidence recall;
 - spatial coverage;
 - overlap redundancy;
-- hard-negative recall;
+- negative retention and selected-negative fraction;
 - source-level AURC; and
 - p95 end-to-end latency.
 
@@ -33,7 +42,8 @@ acceptance, review rate, and p95 latency.
 ## Table 4: directed crop transfer
 
 Complete M->M, M->A, A->M, A->A, and pooled training. Report primary utility,
-source-clustered interval, paired transfer drop, and selective operating point.
+source-clustered interval, domain gap, and selective operating point. Use paired
+method contrasts only when systems are scored on the same target sources.
 
 ## Figure and Table 5: reliability
 

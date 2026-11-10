@@ -25,11 +25,21 @@
 report with sample size, sampling strata, agreement, adjudication, and
 exclusions.
 
+Freeze collection site, session, flight/block, camera, and sequence metadata
+where available. If these identifiers are unavailable, state that limitation;
+do not assume source-image independence is sufficient. Document annotation and
+relabeling rules, what constitutes one plant, and data-release restrictions.
+
 ## B. Detector and detector-only system
 
 Run M->M, A->A, M->A, A->M, and pooled protocols. Report AP50:95, precision,
 recall, false positives, count error, and recall by object size/density. Build a
 deterministic source record from detector outputs for all derivable fields.
+
+Distinguish naturally empty candidates, boundary-aware empty candidates, mined
+false-positive crops, and verified negative evaluation units. Review mined
+negatives for missed annotations. Match training exposure/optimization steps
+when attributing gains to mining.
 
 This is the minimum baseline against which VLM value is assessed.
 
@@ -73,10 +83,18 @@ reducer, and gate without target-test feedback. Report:
 
 - within-domain performance;
 - cross-domain performance;
-- paired transfer drop;
+- domain gap relative to the corresponding in-domain protocol;
 - detector miss/routing miss decomposition;
 - scale/density-stratified diagnostics; and
 - risk/coverage under shift.
+
+Use paired uncertainty only for method comparisons evaluated on the same target
+sources. Magnolia and Azalea target sets are distinct, so their domain gap is
+not an image-paired estimate.
+
+Publish a protocol matrix naming the data used to train the detector, tune the
+selector/reducer, fit the gate, choose its threshold, and score the test set for
+M->M, A->A, M->A, A->M, and pooled protocols.
 
 ## F. Selective reliability
 
@@ -126,6 +144,10 @@ Report hardware, OS, library versions, precision, warm-up, image resolution,
 generation length, mean, p50, p95, throughput, peak memory, and model-loading
 memory.
 
+Synchronize accelerators around timing, declare batch size and loading
+inclusion, and measure source-level latency directly. Do not derive source p95
+by multiplying tile-level p95.
+
 ## I. Failure analysis
 
 Use a frozen stratified sample and at least two reviewers where feasible.
@@ -151,3 +173,7 @@ examples by the frozen rule rather than visual preference.
 Every run records commit, command, manifest hash, split hash, model and revision,
 checkpoint hash, seed, hardware, start/end time, environment, and output hash.
 Tables and figures are generated directly from immutable result artifacts.
+
+Register every final value or figure series in
+`RESULT_PROVENANCE_REGISTRY.csv`. A missing registry row blocks manuscript
+insertion.

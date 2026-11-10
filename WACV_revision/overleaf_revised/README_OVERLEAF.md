@@ -10,6 +10,11 @@ paper. Red `[PENDING: ...]` markers and red dashes identify required experiment
 artifacts. They must never be interpreted as zero and must never be replaced by
 estimated values.
 
+`IMPLEMENTATION_STATUS.md` records the boundary between checked-in code and the
+corrected target method. Method text is not completion evidence. Every final
+number or figure series must have a completed row in
+`RESULT_PROVENANCE_REGISTRY.csv`.
+
 The WACV architecture, figures, bibliography style, references, and official
 style file are included. The manuscript now contains:
 
@@ -29,8 +34,10 @@ style file are included. The manuscript now contains:
 1. Complete every item in `REVISION_CHECKLIST.md`.
 2. Fill every required artifact in `EXPERIMENTS_TO_FILL.md`.
 3. Follow `NUMERICAL_INTEGRITY.md` for every number.
-4. Remove every `\pending`, `\pendingcell`, and `\draftnote` occurrence.
-5. Regenerate the PDF and independently verify all claims, tables, figures,
+4. Reconcile every method statement with `IMPLEMENTATION_STATUS.md` and tests.
+5. Complete `RESULT_PROVENANCE_REGISTRY.csv`.
+6. Remove every `\pending`, `\pendingcell`, and `\draftnote` occurrence.
+7. Regenerate the PDF and independently verify all claims, tables, figures,
    references, anonymity, page limit, and metadata.
 
 ## Preserved history

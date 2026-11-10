@@ -9,6 +9,10 @@ Please review and mark each decision before manuscript rewriting begins.
       claims unless new labels are added.
 - [ ] Approve source-level exact record or another explicitly defined source
       utility as the primary endpoint.
+- [ ] Approve the field-by-field contract in `TASK_SCHEMA_AND_UNIT_FREEZE.md`.
+- [ ] Decide whether density and annotated-box coverage are sufficiently
+      distinct and meaningful to remain primary task fields.
+- [ ] Approve the practical user and the action taken after a review referral.
 - [ ] Approve presenting exploit--explore as a policy with trade-offs rather
       than an assumed winner.
 
@@ -16,6 +20,8 @@ Please review and mark each decision before manuscript rewriting begins.
 
 - [ ] Approve detector-only and deterministic aggregation as mandatory
       baselines.
+- [ ] Approve pivoting or narrowing the paper if the VLM does not add measurable
+      value over those baselines.
 - [ ] Approve implementation of an overlap-aware source reducer.
 - [ ] Approve a coordinate-aware 2D spatial baseline.
 - [ ] Approve per-source order-invariant random seeds.
