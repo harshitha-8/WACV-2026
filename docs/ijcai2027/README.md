@@ -5,7 +5,7 @@ possible submission to IJCAI 2027. It is deliberately separate from
 `submission/wacv2027/`, which is preserved as a historical snapshot.
 
 Manuscript rewriting is currently gated by the WACV repair review in
-`revision/wacv_repair/`. That package must be approved before the IJCAI paper
+`WACV_revision/`. That package must be approved before the IJCAI paper
 inherits any scientific claim, table, or method description.
 
 ## Non-negotiable submission constraints
